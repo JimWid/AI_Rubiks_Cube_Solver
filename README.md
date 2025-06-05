@@ -1,0 +1,61 @@
+# AI Rubiks Cube Solver (Rubiks Cube Detector so Far)
+This project provides a real-time Rubik's Cube detector built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes in real-time.
+# Features
+Real-time Detection: Detects Rubik's Cubes live from your webcam feed.
+YOLOv5 Powered: Leverages the efficient and accurate YOLOv5 architecture.
+Custom Trained Model: Utilizes a specifically trained model (best.pt) optimized for Rubik's Cube detection.
+# Getting Started
+Follow these steps to get the detector up and running on your local machine.
+## Prerequisites
+### Before you begin, ensure you have the following:
+Python 3.8+ (Recommended)
+- A webcam connected to your computer
+- A stable internet connection for the initial setup
+- (Optional but Recommended) A NVIDIA GPU for faster inference. If you don't have one, the model will run on your CPU, which might be slower.
+## 1. Clone the Repository
+First, clone this project repository to your local machine:
+code: 
+```
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git
+
+cd YOUR_REPOSITORY_NAME
+```
+Remember to replace YOUR_USERNAME and YOUR_REPOSITORY_NAME with your actual GitHub username and repository name.
+## 2. Set up the Enviroment
+```
+python -m venv venv
+```
+## Activate the virtual environment
+### On Windows:
+```
+.\venv\Scripts\activate
+```
+### On macOS/Linux:
+```
+source venv/bin/activate
+```
+### Install the required Python packages
+```
+pip install -r requirements.txt
+```
+## 3. Run Main.py file
+```
+python main.py
+```
+- A window showing your webcam feed will open.
+- The detector will start analyzing the feed in real-time and draw bounding boxes around detected Rubik's Cubes.
+- Press the q key to quit the application.
+
+#### Important Note on YOLOv5 Framework:
+The main.py script uses torch.hub.load('ultralytics/yolov5', 'yolov5s', ...) to download the base YOLOv5 model architecture. This means the necessary YOLOv5 framework code will be automatically downloaded to your PyTorch Hub cache (usually located in ~/.cache/torch/hub/) the first time you run the script, provided you have an internet connection.
+
+# Known Limitations and Tips for Best Performance
+#### Lighting Conditions: 
+The model performs best in well-lit environments. Poor lighting, excessive shadows, or glare can reduce detection accuracy.
+#### Background Clutter: 
+A plain, contrasting background behind the Rubik's Cube can improve detection reliability.
+#### Object Distance and Angle: 
+The model is trained on a variety of distances and angles, but extreme close-ups, far distances, or unusual orientations might sometimes be challenging. Try presenting the cube clearly in the camera's view.
+#### Performance: 
+On CPU, detection might be noticeably slower, leading to a lower frame rate. For real-time smooth performance, a GPU is highly recommended.
+Confidence Threshold: If the detector isn't picking up cubes, you might need to adjust the CONFIDENCE_THRESHOLD variable in main.py. Lowering it could show more detections (including potential false positives), while raising it makes detections stricter.
