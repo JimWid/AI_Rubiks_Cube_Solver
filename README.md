@@ -17,9 +17,8 @@ First, clone this project repository to your local machine:
 code: 
 ```
 git clone https://github.com/JimWid/AI_Rubiks_Cube_Solver.git
-
+cd AI_Rubiks_Cube_Solver
 ```
-Remember to replace YOUR_USERNAME and YOUR_REPOSITORY_NAME with your actual GitHub username and repository name.
 ## 2. Set up the Enviroment
 ```
 python -m venv venv
