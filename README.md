@@ -16,9 +16,8 @@ Python 3.8+ (Recommended)
 First, clone this project repository to your local machine:
 code: 
 ```
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git
+git clone https://github.com/JimWid/AI_Rubiks_Cube_Solver.git
 
-cd YOUR_REPOSITORY_NAME
 ```
 Remember to replace YOUR_USERNAME and YOUR_REPOSITORY_NAME with your actual GitHub username and repository name.
 ## 2. Set up the Enviroment
