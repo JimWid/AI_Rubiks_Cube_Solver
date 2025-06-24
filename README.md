@@ -1,7 +1,7 @@
-# AI Rubiks Cube Solver (Rubiks Cube Detector so Far)
-This project provides a real-time Rubik's Cube detector built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes in real-time.
+# AI Rubiks Cube Solver (Rubiks Cube Detector with Color Recognition so Far)
+This project provides a real-time Rubik's Cube detector with color recognition built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes and its color in real-time.
 # Features
-Real-time Detection: Detects Rubik's Cubes live from your webcam feed.
+Real-time Detection: Detects Rubik's Cubes and its color live from your webcam feed.
 YOLOv5 Powered: Leverages the efficient and accurate YOLOv5 architecture.
 Custom Trained Model: Utilizes a specifically trained model (best.pt) optimized for Rubik's Cube detection.
 # Getting Started
@@ -21,16 +21,16 @@ cd AI_Rubiks_Cube_Solver
 ```
 ## 2. Set up the Enviroment
 ```
-python -m venv venv
+python -m venv env
 ```
 ## Activate the virtual environment
 ### On Windows:
 ```
-.\venv\Scripts\activate
+.\env\Scripts\activate
 ```
 ### On macOS/Linux:
 ```
-source venv/bin/activate
+source env/bin/activate
 ```
 ### Install the required Python packages
 ```
@@ -49,7 +49,7 @@ The main.py script uses torch.hub.load('ultralytics/yolov5', 'yolov5s', ...) to 
 
 # Known Limitations and Tips for Best Performance
 #### Lighting Conditions: 
-The model performs best in well-lit environments. Poor lighting, excessive shadows, or glare can reduce detection accuracy.
+The model performs best in well-lit environments. Poor lighting, excessive shadows, or glare can reduce detection on cube and color accuracy.
 #### Background Clutter: 
 A plain, contrasting background behind the Rubik's Cube can improve detection reliability.
 #### Object Distance and Angle: 
