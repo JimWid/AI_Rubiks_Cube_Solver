@@ -4,7 +4,7 @@ import torch
 import numpy as np
 
 # Path to the trained model
-CUSTOM_MODEL_PATH = "./yolov5/runs/train/rubiks_cube_detector10/weights/best.pt"
+CUSTOM_MODEL_PATH = "./best.pt"
 CONFIDENCE_THRESHOLD = 0.5
 
 # Color Detection Setup - HSV = HUE, SATURATION, VALUE
