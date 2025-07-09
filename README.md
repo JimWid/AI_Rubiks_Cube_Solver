@@ -1,9 +1,10 @@
 # AI Rubiks Cube Solver (Rubiks Cube Detector with Color Recognition so Far)
-This project provides a real-time Rubik's Cube detector with color recognition built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes and its color in real-time.
+This project provides a real-time Rubik's Cube detector with color recognition built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes and its color in real-time. Once all colors are detected it will give you a set of steps to solve the cube.
 # Features
 Real-time Detection: Detects Rubik's Cubes and its color live from your webcam feed.
 YOLOv5 Powered: Leverages the efficient and accurate YOLOv5 architecture.
 Custom Trained Model: Utilizes a specifically trained model (best.pt) optimized for Rubik's Cube detection.
+Kociemba Solver: Utilizes kociemba module to generate a set of moves to solve the cube.
 # Getting Started
 Follow these steps to get the detector up and running on your local machine.
 ## Prerequisites
@@ -40,8 +41,8 @@ pip install -r requirements.txt
 ```
 python main.py
 ```
-- A window showing your webcam feed will open.
-- The detector will start analyzing the feed in real-time and draw bounding boxes around detected Rubik's Cubes.
+- A window showing your webcam feed will open. With certain comments and intructions for the user.
+- The detector will start analyzing the feed in real-time and draw bounding boxes around the most confident Rubik's Cube detected.
 - Press the q key to quit the application.
 
 #### Important Note on YOLOv5 Framework:
@@ -56,4 +57,6 @@ A plain, contrasting background behind the Rubik's Cube can improve detection re
 The model is trained on a variety of distances and angles, but extreme close-ups, far distances, or unusual orientations might sometimes be challenging. Try presenting the cube clearly in the camera's view.
 #### Performance: 
 On CPU, detection might be noticeably slower, leading to a lower frame rate. For real-time smooth performance, a GPU is highly recommended.
-Confidence Threshold: If the detector isn't picking up cubes, you might need to adjust the CONFIDENCE_THRESHOLD variable in main.py. Lowering it could show more detections (including potential false positives), while raising it makes detections stricter.
+ - **Color Performance**: It is very confident and succesful with most of the colors in the right lighting, most complicated color to detect is Orange getting confused by Red.
+ - **Confidence Threshold**: If the detector isn't picking up cubes, you might need to adjust the CONFIDENCE_THRESHOLD variable in main.py. Lowering it could show more detections (including potential      false positives), while raising it makes detections stricter.
+ - **Solver Performance**: The kociemba string is well generated, but I hypothesis that it needs to be in the right angle and orientation for the kociemba solver to actually accept it. Otherwise it        will get an error. Try to find the correct posture of every face. I'm working on this matter since its very fustrating.
