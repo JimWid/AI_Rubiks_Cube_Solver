@@ -1,4 +1,4 @@
-# AI Rubiks Cube Solver (Rubiks Cube Detector with Color Recognition so Far)
+# Rubiks Cube Solver In Real Time (Computer Vision)
 This project provides a real-time Rubik's Cube detector with color recognition built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes and its color in real-time. Once all colors are detected it will give you a set of steps to solve the cube.
 # Features
 Real-time Detection: Detects Rubik's Cubes and its color live from your webcam feed.
