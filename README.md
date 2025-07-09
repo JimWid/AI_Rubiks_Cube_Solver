@@ -1,10 +1,10 @@
 # Rubiks Cube Solver In Real Time (Computer Vision)
 This project provides a real-time Rubik's Cube detector with color recognition built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes and its color in real-time. Once all colors are detected it will give you a set of steps to solve the cube.
 # Features
-Real-time Detection: Detects Rubik's Cubes and its color live from your webcam feed.
-YOLOv5 Powered: Leverages the efficient and accurate YOLOv5 architecture.
-Custom Trained Model: Utilizes a specifically trained model (best.pt) optimized for Rubik's Cube detection.
-Kociemba Solver: Utilizes kociemba module to generate a set of moves to solve the cube.
+ - **Real-time Detection**: Detects Rubik's Cubes and its color live from your webcam feed.
+ - **YOLOv5 Powered**: Leverages the efficient and accurate YOLOv5 architecture.
+ - **Custom Trained Model**: Utilizes a specifically trained model (best.pt) optimized for Rubik's Cube detection.
+ - **Kociemba Solver**: Utilizes kociemba module to generate a set of moves to solve the cube.
 # Getting Started
 Follow these steps to get the detector up and running on your local machine.
 ## Prerequisites
