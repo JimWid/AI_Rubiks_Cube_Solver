@@ -1,11 +1,20 @@
+import warnings
+# Warning from torch.hub about using an older version, putting this to simply skip that message
+warnings.filterwarnings(
+    "ignore", 
+    category=FutureWarning,
+    module="models.common"
+)
+
 import cv2
 import sys
 import torch
 import numpy as np
+import kociemba
 
 # Path to the trained model
 CUSTOM_MODEL_PATH = "./best.pt"
-CONFIDENCE_THRESHOLD = 0.5
+CONFIDENCE_THRESHOLD = 0.4
 
 # Color Detection Setup - HSV = HUE, SATURATION, VALUE
 HSV_RANGES = {
@@ -63,18 +72,14 @@ def generate_kociemba_string(state):
     if any(None in face_colors for face_colors in state.values()):
         return "Error: not all faces have been scanned"
         
-    face_to_color_map = {v : k for k, v in COLOR_TO_FACE_MAP.items()}
-            
     kociemba_string = ""
 
-    for face_char in KOCIEMBA_FACE_ORDER:
-        center_color_name = face_to_color_map[face_char]
-
-        scanned_colors = state[face_char]
+    for face_character in KOCIEMBA_FACE_ORDER:
+        scanned_colors = state[face_character]
 
         for color_name in scanned_colors:
             if color_name in COLOR_TO_FACE_MAP:
-                    kociemba_string += COLOR_TO_FACE_MAP[color_name]
+                kociemba_string += COLOR_TO_FACE_MAP[color_name]
 
             else:
                 kociemba_string += "?" # This should not happen but good for debuggin purposes.
@@ -98,13 +103,14 @@ try:
         force_reload=False,   # Set to True if you suspect cache issues or updated the model
     )
     model.conf = CONFIDENCE_THRESHOLD 
-    print("YOLOv5 model loaded successfully via torch.hub!")
+    print("YOLOv5 model loaded successfully via torch.hub!\n")
 
 except Exception as e:
     print(f"An error occurred during model loading: {e}")
     sys.exit()
 
-print(f"Using confidence threshold: {model.conf}")
+print(f"Using confidence threshold: {model.conf}\n")
+print("Scan: 1. White, 2. Red, 3. Green, 4. Yellow, 5. Orange, 6. Blue\n")
 
 current_face_state = []
 
@@ -131,7 +137,7 @@ while cap.isOpened():
 
         # Drawing the main bounding box
         cv2.rectangle(display_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(display_frame, f"Rubiks Cube (Confidence:{row['confidence']:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.putText(display_frame, f"Rubiks Cube (Confidence:{row['confidence']:.2f})", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
         # Sticker Region Caculation (Aprox.)
         box_width = x2 - x1
@@ -139,10 +145,10 @@ while cap.isOpened():
 
         # Calculation ROI: Region Of Interest
         # For every sticker in a 3x3 grid + adding a padding to avoid black borders between stickers
-        padding_x = int(box_width * 0.05) // 3
-        padding_y = int(box_height * 0.05) // 3
+        padding_x = int(box_width * 0.1) // 3
+        padding_y = int(box_height * 0.1) // 3
         sticker_width = (box_height - 2 * padding_x * 3) // 3
-        sticker_height = (box_height - 2 * padding_y  *3) // 3
+        sticker_height = (box_height - 2 * padding_y * 3) // 3
 
         detected_face_colors = []
 
@@ -215,7 +221,24 @@ while cap.isOpened():
         k_string = generate_kociemba_string(cube_state)
         cv2.putText(display_frame, "All faces scanned! Press 'c' to clear.", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
         y_offset += 25
-        cv2.putText(display_frame, f"Kociemba: {k_string}", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.putText(display_frame, f"Kociemba: {k_string}", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 2)
+
+        if k_string:
+            print(f"\nCube State: {cube_state}")
+            print(f"\nKociemba String: {k_string}.")
+            print("\n---------Steps To Follow---------")
+
+            # Steps To Solve
+            print(kociemba.solve(k_string))
+
+            # Intructions and Reminders
+            print("\nRemember:\n1) Faces: U = Up, R = Right, F = Front, D = Down, L = Left, and B = Back.")
+            print("""- A single letter by itself means to turn that face clockwise 90 degrees.\n
+                     - A letter followed by an apostrophe means to turn that face counterclockwise 90 degrees.\n
+                     - A letter with the number 2 after it means to turn that face 180 degrees.""")
+
+            break
+
 
     cv2.imshow("Rubiks Cube Scanner!!!", display_frame)
 
