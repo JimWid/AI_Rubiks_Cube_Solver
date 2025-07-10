@@ -10,11 +10,11 @@ import cv2
 import sys
 import torch
 import numpy as np
-import kociemba
+#from rubik_solver import utils
 
 # Path to the trained model
 CUSTOM_MODEL_PATH = "./best.pt"
-CONFIDENCE_THRESHOLD = 0.4
+CONFIDENCE_THRESHOLD = 0.80
 
 # Color Detection Setup - HSV = HUE, SATURATION, VALUE
 HSV_RANGES = {
@@ -229,7 +229,8 @@ while cap.isOpened():
             print("\n---------Steps To Follow---------")
 
             # Steps To Solve
-            print(kociemba.solve(k_string))
+            #solution = utils.solve(k_string, "Kociemba")
+            #print(solution)
 
             # Intructions and Reminders
             print("\nRemember:\n1) Faces: U = Up, R = Right, F = Front, D = Down, L = Left, and B = Back.")
