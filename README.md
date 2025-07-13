@@ -4,7 +4,7 @@ This project provides a real-time Rubik's Cube detector with color recognition b
  - **Real-time Detection**: Detects Rubik's Cubes and its color live from your webcam feed.
  - **YOLOv5 Powered**: Leverages the efficient and accurate YOLOv5 architecture.
  - **Custom Trained Model**: Utilizes a specifically trained model (best.pt) optimized for Rubik's Cube detection.
- - **Kociemba Solver**: Utilizes kociemba module to generate a set of moves to solve the cube.
+ - **TwoPhase Solver**: Utilizes the module TwoPhaseSolver to generate a set of moves to solve the cube in **20 moves or less**.
 # Getting Started
 Follow these steps to get the detector up and running on your local machine.
 ## Prerequisites
@@ -17,8 +17,8 @@ Python 3.8+ (Recommended)
 First, clone this project repository to your local machine:
 code: 
 ```
-git clone https://github.com/JimWid/AI_Rubiks_Cube_Solver.git
-cd AI_Rubiks_Cube_Solver
+git clone https://github.com/JimWid/Rubiks_Cube_Solver.git
+cd Rubiks_Cube_Solver
 ```
 ## 2. Set up the Enviroment
 ```
@@ -27,7 +27,7 @@ python -m venv env
 ## Activate the virtual environment
 ### On Windows:
 ```
-.\env\Scripts\activate
+env\Scripts\activate
 ```
 ### On macOS/Linux:
 ```
@@ -45,8 +45,8 @@ python main.py
 - The detector will start analyzing the feed in real-time and draw bounding boxes around the most confident Rubik's Cube detected.
 - Press the q key to quit the application.
 
-# Important Note on Cube Orientation and Directions:
-After some try and error I have finally found the correct sequence and orientations the faces should have at the moment of scanning. 
+# Important notes on Cube Orientation and Directions:
+After some try and error I have finally found the correct sequence and orientations the faces should have at the moment of scanning. (**the sequence itself is not necessary but it helps to know the orientation**) Since the program relies on Colors, make sure to follow:
 ## First:
 Defining Your Cube: Make sure you see your cube as:
 - **White: UP**
