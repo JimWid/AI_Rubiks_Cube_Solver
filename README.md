@@ -45,6 +45,19 @@ python main.py
 - The detector will start analyzing the feed in real-time and draw bounding boxes around the most confident Rubik's Cube detected.
 - Press the q key to quit the application.
 
+# Important Note on Cube Orientation and Directions:
+After some try and error I have finally found the correct sequence and orientations the faces should have at the moment of scanning. 
+#### First:
+Defining Your Cube: Make sure you see your cube as:
+- **White: UP**
+- ***Green: Front**
+- **Red: Right**
+- **Blue: Back**
+- **Yellow: Down**
+- **Orange: Left**
+
+Once you have **Green** in front of you(or the camera). **turn down** to scan **White** first, move the cube **UP** to face green again. And turn the cube **right(->)** to scan **Red**, then right again(->) to scan **Blue**, again to scan **Orange** and again to scan **Green**, keep Green in front of the camera and then **move up** to scan **Yellow**.
+
 #### Important Note on YOLOv5 Framework:
 The main.py script uses torch.hub.load('ultralytics/yolov5', 'yolov5s', ...) to download the base YOLOv5 model architecture. This means the necessary YOLOv5 framework code will be automatically downloaded to your PyTorch Hub cache (usually located in ~/.cache/torch/hub/) the first time you run the script, provided you have an internet connection.
 
