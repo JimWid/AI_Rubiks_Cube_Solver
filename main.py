@@ -1,107 +1,24 @@
 import warnings
 # Warning from torch.hub about using an older version, putting this to simply skip that message
-warnings.filterwarnings(
-    "ignore", 
-    category=FutureWarning,
-    module="models.common"
-)
+warnings.filterwarnings("ignore", category=FutureWarning, module="models.common")
 
 import cv2
 import sys
 import torch
 import numpy as np
-#from rubik_solver import utils
+from twophase.solver import solve
+
+from display_cube import display_cube
+from funcs import *
 
 # Path to the trained model
 CUSTOM_MODEL_PATH = "./best.pt"
-CONFIDENCE_THRESHOLD = 0.80
-
-# Color Detection Setup - HSV = HUE, SATURATION, VALUE
-HSV_RANGES = {
-    'red':    [[160, 100, 100], [179, 255, 255]], # Also covers a bit of the 0-10 range in the get_color_name function
-    'orange': [[10, 100, 100], [25, 255, 255]],
-    'yellow': [[26, 100, 100], [40, 255, 255]],
-    'green':  [[41, 80, 80], [85, 255, 255]],
-    'blue':   [[86, 100, 100], [130, 255, 255]],
-    'white':  [[0, 0, 180], [179, 80, 255]] # White has low saturation and high value
-    }
-        
-# Cube State Representation Setup: up, right, front, down, left and back
-KOCIEMBA_FACE_ORDER = ['U', 'R', 'F', 'D', 'L', 'B']
-
-# Each letter reprents a color, we are using the standar color scheme
-COLOR_TO_FACE_MAP = {
-    'white':  'U',
-    'red':    'R',
-    'green':  'F',
-    'yellow': 'D',
-    'orange': 'L',
-    'blue':   'B'
-    }
-        
-# Dictionary to hold and the state as we scan the cube faces
-# Initializing cube state as None, meaning the faces haven't been scanned
-cube_state = {face : [None] * 9 for face in KOCIEMBA_FACE_ORDER}
-
-# Utility Functions:
-# Getting the name for each color
-def get_color_name(h, s, v): # HUE, SATURATION, VALUE
-
-    # Checking for white first, since its HUE can be anything but sarutation is low.
-    if HSV_RANGES["white"][0][1] <= s <= HSV_RANGES["white"][1][1] and \
-       HSV_RANGES["white"][0][2] <= v <= HSV_RANGES["white"][1][2]:
-       return 'white'
-        
-    # Cheking for Red, which HUE is close to 180 / highest
-    if (0 <= h <= 10 or 160 <= h <= 179) and s > 100 and v > 100:
-        return "red"
-        
-    # For Loop to iterate HSV_Ranges and return the color
-    for color, (lower, upper) in HSV_RANGES.items():
-        if color in ["red", "white"]: # Skiping these two since we handled them already
-            continue
-
-        if lower[0] <= h <= upper[0] and lower[1] <= s <= upper[1] and lower[2] <= v <= upper[2]:
-            return color
-
-    return None
-
-# Generating the kociemba string
-def generate_kociemba_string(state):
-        
-    if any(None in face_colors for face_colors in state.values()):
-        return "Error: not all faces have been scanned"
-        
-    kociemba_string = ""
-
-    for face_character in KOCIEMBA_FACE_ORDER:
-        scanned_colors = state[face_character]
-
-        for color_name in scanned_colors:
-            if color_name in COLOR_TO_FACE_MAP:
-                kociemba_string += COLOR_TO_FACE_MAP[color_name]
-
-            else:
-                kociemba_string += "?" # This should not happen but good for debuggin purposes.
-
-    return kociemba_string
-
-# Camera Setup
-cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    print("Error: Could not open camera D:")
-    sys.exit()
+CONFIDENCE_THRESHOLD = 0.30
 
 # Loading Custom Trained YOLOv5 Model using torch.hub
 try:
     print(f"Loading YOLOv5 custom model from torch.hub: {CUSTOM_MODEL_PATH}")
-    # force_reload=True can help if you have caching issues
-    model = torch.hub.load(
-        'ultralytics/yolov5', # The repository
-        'custom',             # Specify 'custom' for your own weights
-        path=CUSTOM_MODEL_PATH, # Path to your .pt file
-        force_reload=False,   # Set to True if you suspect cache issues or updated the model
-    )
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path=CUSTOM_MODEL_PATH, force_reload=False)
     model.conf = CONFIDENCE_THRESHOLD 
     print("YOLOv5 model loaded successfully via torch.hub!\n")
 
@@ -109,19 +26,27 @@ except Exception as e:
     print(f"An error occurred during model loading: {e}")
     sys.exit()
 
-print(f"Using confidence threshold: {model.conf}\n")
-print("Scan: 1. White, 2. Red, 3. Green, 4. Yellow, 5. Orange, 6. Blue\n")
-
+# Setting up Cube State
+cube_state = {face : [None] * 9 for face in KOCIEMBA_FACE_ORDER}
 current_face_state = []
+
+print(f"Using confidence threshold: {model.conf}\n")
+print("Scan: 1. White, 2. Red, 3. Blue, 4. Orange, 5. Green, 6. Yellow\n")
+
+# Camera Setup
+cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("Error: Could not open camera D:")
+    sys.exit()
 
 while cap.isOpened():
     ret, frame = cap.read()
+
     if not ret:
         print("Error: Failed to grab frame.")
         break
-
+    
     frame = cv2.flip(frame, 1)
-
     display_frame = frame.copy()
 
     # Converting frame to RGB for the model YOLOv5   
@@ -185,7 +110,6 @@ while cap.isOpened():
         current_face_state = detected_face_colors
 
     key = cv2.waitKey(1) & 0xFF
-
     if key == ord("q"):
         break
 
@@ -194,13 +118,10 @@ while cap.isOpened():
 
     if chr(key) in key_to_face:
         face_char = key_to_face[chr(key)]
-        if current_face_state and len(current_face_state) == 9:
-            
+
+        if current_face_state and len(current_face_state) == 9 and None not in current_face_state:
             cube_state[face_char] = current_face_state
             print(f"Scanned Face: '{face_char}': {current_face_state}")
-
-        else:
-            print(f"Could not scan face '{face_char}'. Cube not clearly visible.")
 
     if key == ord('c'):
         cube_state = {face: [None] * 9 for face in KOCIEMBA_FACE_ORDER}
@@ -211,35 +132,32 @@ while cap.isOpened():
     scanned_faces = [face for face, colors in cube_state.items() if colors[0] is not None]
     cv2.putText(display_frame, "Press key for the face's CENTER color:", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
     y_offset += 25
-    cv2.putText(display_frame, "'w:white r:red g:green y:yellow o:orange b:blue", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+    cv2.putText(display_frame, "w:white r:red g:green y:yellow o:orange b:blue", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
     y_offset += 30
     cv2.putText(display_frame, f"Scanned Faces: {scanned_faces}", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
 
-    # Checking if all faces are scanned and generate the final string
+    # Checking if all faces are scanned and generating the final string
     if len(scanned_faces) == 6:
         y_offset += 30
         k_string = generate_kociemba_string(cube_state)
         cv2.putText(display_frame, "All faces scanned! Press 'c' to clear.", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
         y_offset += 25
-        cv2.putText(display_frame, f"Kociemba: {k_string}", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 2)
 
+        # Showing Kociemba String, Cube State and Steps
         if k_string:
             print(f"\nCube State: {cube_state}")
-            print(f"\nKociemba String: {k_string}.")
+            print(f"\nKociemba String: {k_string}.\n")
+            print("Your 2D cube representation:\n", display_cube(cube_state))
             print("\n---------Steps To Follow---------")
 
-            # Steps To Solve
-            #solution = utils.solve(k_string, "Kociemba")
-            #print(solution)
+            solution = solve(k_string)
+            print(solution)
 
             # Intructions and Reminders
             print("\nRemember:\n1) Faces: U = Up, R = Right, F = Front, D = Down, L = Left, and B = Back.")
-            print("""- A single letter by itself means to turn that face clockwise 90 degrees.\n
-                     - A letter followed by an apostrophe means to turn that face counterclockwise 90 degrees.\n
-                     - A letter with the number 2 after it means to turn that face 180 degrees.""")
-
+            print("U, R, F, D, L and B denote the Up, Right, Front, Down, Left and Back faces of the cube." \
+            "1, 2, and 3 denote a 90°, 180° and 270° clockwise rotation of the corresponding face.")
             break
-
 
     cv2.imshow("Rubiks Cube Scanner!!!", display_frame)
 
