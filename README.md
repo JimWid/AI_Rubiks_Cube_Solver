@@ -47,10 +47,10 @@ python main.py
 
 # Important Note on Cube Orientation and Directions:
 After some try and error I have finally found the correct sequence and orientations the faces should have at the moment of scanning. 
-#### First:
+## First:
 Defining Your Cube: Make sure you see your cube as:
 - **White: UP**
-- ***Green: Front**
+- **Green: Front**
 - **Red: Right**
 - **Blue: Back**
 - **Yellow: Down**
@@ -70,6 +70,6 @@ A plain, contrasting background behind the Rubik's Cube can improve detection re
 The model is trained on a variety of distances and angles, but extreme close-ups, far distances, or unusual orientations might sometimes be challenging. Try presenting the cube clearly in the camera's view.
 #### Performance: 
 On CPU, detection might be noticeably slower, leading to a lower frame rate. For real-time smooth performance, a GPU is highly recommended.
- - **Color Performance**: It is very confident and succesful with most of the colors in the right lighting, most complicated color to detect is Orange getting confused by Red.
+ - **Color Performance**: It is very confident and succesful with most of the colors in the right lighting, most complicated color to detect is Orange getting confused by Red (**this has improved**).
  - **Confidence Threshold**: If the detector isn't picking up cubes, you might need to adjust the CONFIDENCE_THRESHOLD variable in main.py. Lowering it could show more detections (including potential      false positives), while raising it makes detections stricter.
  - **Solver Performance**: The kociemba string is well generated, but I hypothesis that it needs to be in the right angle and orientation for the kociemba solver to actually accept it. Otherwise it        will get an error. Try to find the correct posture of every face. I'm working on this matter since its very frustrating.
