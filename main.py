@@ -4,23 +4,22 @@ warnings.filterwarnings("ignore", category=FutureWarning, module="models.common"
 
 import cv2
 import sys
-import torch
 import numpy as np
 from twophase.solver import solve
+from ultralytics import YOLO
 
 from display_cube import display_cube
 from funcs import *
 
 # Path to the trained model
 CUSTOM_MODEL_PATH = "./best.pt"
-CONFIDENCE_THRESHOLD = 0.30
+CONFIDENCE_THRESHOLD = 0.80
 
 # Loading Custom Trained YOLOv5 Model using torch.hub
 try:
-    print(f"Loading YOLOv5 custom model from torch.hub: {CUSTOM_MODEL_PATH}")
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=CUSTOM_MODEL_PATH, force_reload=False)
-    model.conf = CONFIDENCE_THRESHOLD 
-    print("YOLOv5 model loaded successfully via torch.hub!\n")
+    print("Loading YOLOv11n custom model...")
+    model = YOLO(CUSTOM_MODEL_PATH)
+    print("YOLOv11n model loaded successfully!\n")
 
 except Exception as e:
     print(f"An error occurred during model loading: {e}")
@@ -51,18 +50,17 @@ while cap.isOpened():
 
     # Converting frame to RGB for the model YOLOv5   
     img_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = model(img_rgb) # Passing the RGB frame to the model
-    detections_df = results.pandas().xyxy[0] 
+    results = model(img_rgb, conf=CONFIDENCE_THRESHOLD, verbose=False) # Passing the RGB frame to the model
+    detections_df = results[0].boxes.data.cpu().numpy()
 
     # Now we are only detecting the cube with the highest confidence %
+    if len(detections_df) > 0:
+        row = detections_df[detections_df[:, 4].argmax()]
+        x1, y1, x2, y2, conf, cls = row
+        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
-    if not detections_df.empty:
-        row = detections_df.iloc[0]
-        x1, y1, x2, y2 = int(row["xmin"]), int(row["ymin"]), int(row["xmax"]), int(row["ymax"])
-
-        # Drawing the main bounding box
         cv2.rectangle(display_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(display_frame, f"Rubiks Cube (Confidence:{row['confidence']:.2f})", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.putText(display_frame, f"Confidence: {conf*100:.2f}%", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
 
         # Sticker Region Caculation (Aprox.)
         box_width = x2 - x1
