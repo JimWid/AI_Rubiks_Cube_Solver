@@ -1,8 +1,8 @@
 # Rubiks Cube Solver In Real Time (Computer Vision)
-This project provides a real-time Rubik's Cube detector with color recognition built using the YOLOv5 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes and its color in real-time. Once all colors are detected it will give you a set of steps to solve the cube.
+This project provides a real-time Rubik's Cube detector with color recognition built using the YOLOv11 object detection framework and a custom-trained model. It utilizes your webcam feed to identify and highlight Rubik's Cubes and its color in real-time. Once all colors are detected it will give you a set of steps to solve the cube.
 # Features
  - **Real-time Detection**: Detects Rubik's Cubes and its color live from your webcam feed.
- - **YOLOv5 Powered**: Leverages the efficient and accurate YOLOv5 architecture.
+ - **YOLOv11 Powered**: Leverages the efficient and accurate YOLOv11 architecture.
  - **Custom Trained Model**: Utilizes a specifically trained model (best.pt) optimized for Rubik's Cube detection.
  - **TwoPhase Solver**: Utilizes the module TwoPhaseSolver to generate a set of moves to solve the cube in **20 moves or less**.
 # Getting Started
@@ -41,13 +41,14 @@ pip install -r requirements.txt
 ```
 python main.py
 ```
+- The module TwoPhaseSolver will start downloading, *this may take some time*, but only on the first time you run main.py, later it wont need to load.
 - A window showing your webcam feed will open. With certain comments and intructions for the user.
 - The detector will start analyzing the feed in real-time and draw bounding boxes around the most confident Rubik's Cube detected.
 - Press the q key to quit the application.
 
 # Important notes on Cube Orientation and Directions:
 After some try and error I have finally found the correct sequence and orientations the faces should have at the moment of scanning. (**the sequence itself is not necessary but it helps to know the orientation**) Since the program relies on Colors, make sure to follow:
-## First:
+### First:
 Defining Your Cube: Make sure you see your cube as:
 - **White: UP**
 - **Green: Front**
@@ -57,9 +58,6 @@ Defining Your Cube: Make sure you see your cube as:
 - **Orange: Left**
 
 Once you have the center of **Green** in front of you(or the camera). **turn down** to scan **White** first, move the cube **UP** to face green again. And turn the cube **right(->)** to scan the **Red** face, then right again(->) to scan **Blue**, again to scan **Orange** and again to scan **Green**, keep Green in front of the camera and then **move up** to scan **Yellow**.
-
-#### Important Note on YOLOv5 Framework:
-The main.py script uses torch.hub.load('ultralytics/yolov5', 'yolov5s', ...) to download the base YOLOv5 model architecture. This means the necessary YOLOv5 framework code will be automatically downloaded to your PyTorch Hub cache (usually located in ~/.cache/torch/hub/) the first time you run the script, provided you have an internet connection.
 
 # Known Limitations and Tips for Best Performance
 #### Lighting Conditions: 
