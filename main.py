@@ -1,7 +1,3 @@
-import warnings
-# Warning from torch.hub about using an older version, putting this to simply skip that message
-warnings.filterwarnings("ignore", category=FutureWarning, module="models.common")
-
 import cv2
 import sys
 import numpy as np
@@ -29,7 +25,7 @@ except Exception as e:
 cube_state = {face : [None] * 9 for face in KOCIEMBA_FACE_ORDER}
 current_face_state = []
 
-print(f"Using confidence threshold: {model.conf}\n")
+print(f"Using confidence threshold: {CONFIDENCE_THRESHOLD}\n")
 print("Scan: 1. White, 2. Red, 3. Blue, 4. Orange, 5. Green, 6. Yellow\n")
 
 # Camera Setup
