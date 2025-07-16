@@ -122,6 +122,9 @@ while cap.isOpened():
 
     if key == ord('c'):
         cube_state = {face: [None] * 9 for face in KOCIEMBA_FACE_ORDER}
+        current_face_state = []
+        scanned_faces = []
+        already_printed = False
         print("\n--- All scanned data cleared. ---\n")
 
     # Displaying Instructions and Status
@@ -142,7 +145,7 @@ while cap.isOpened():
 
         # Showing Kociemba String, Cube State and Steps
         if k_string and not already_printed:
-            print(f"\nCube State: {cube_state}")
+            #print(f"\nCube State: {cube_state}")
             print(f"\nKociemba String: {k_string}.\n")
             print("Your 2D cube representation:\n", display_cube(cube_state))
 
@@ -157,6 +160,7 @@ while cap.isOpened():
             already_printed = True
 
         cv2.putText(display_frame, f"Steps: {solution}", (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 255, 0), 2)
+        cv2.putText(display_frame, solution, (10, y_offset + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.52, (0, 255, 0), 2)
 
     cv2.imshow("Rubiks Cube Scanner!!!", display_frame)
 
